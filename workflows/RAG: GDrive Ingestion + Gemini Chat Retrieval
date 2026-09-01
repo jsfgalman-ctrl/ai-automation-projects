@@ -1,0 +1,796 @@
+{
+  "updatedAt": "2026-08-15T05:33:49.022Z",
+  "createdAt": "2026-08-15T04:25:23.749Z",
+  "id": "hTPmpbA7osXTspC7",
+  "name": "RAG: GDrive Ingestion + Gemini Chat Retrieval",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3",
+          "mode": "list",
+          "cachedResultName": "RAG VECTOR COMPANY DOCS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "f9bb648a-c724-4cb9-a96c-21f4973190e5",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "83HGprsOr1AmojiR",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3",
+          "mode": "list",
+          "cachedResultName": "RAG VECTOR COMPANY DOCS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        192
+      ],
+      "id": "b720eab1-84ca-404a-ace5-cc9a57eb4b4d",
+      "name": "Google Drive Trigger1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "83HGprsOr1AmojiR",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        288,
+        96
+      ],
+      "id": "e480e228-7fab-4348-9088-939f52392452",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "83HGprsOr1AmojiR",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        416,
+        304
+      ],
+      "id": "050b33c6-91b3-4553-9c40-ccb55ab505e6",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "x18AMzs5e5Q4NtQA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        608,
+        272
+      ],
+      "id": "f366d6bf-7a0c-4927-a84c-5010f9990960",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -32,
+        496
+      ],
+      "id": "9f809434-701a-462a-884b-279e59245177",
+      "name": "When chat message received",
+      "webhookId": "221a2a6c-a29c-41f4-997b-04e5d39f0778"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.3-70b-versatile",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        112,
+        720
+      ],
+      "id": "d1d5037a-f393-456e-9dca-9d09a7e1291b",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "ZhutSD9bJfdOcVDy",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a friendly and helpful customer service assistant for Brightline Home Services, a residential cleaning company in Austin, Texas.\n\nYour job is to answer customer questions using the company documents available to you through the search tool. Always search the documents first before answering questions about pricing, policies, services, or company details.\n\nSpeak in a warm, approachable, and conversational tone — like a helpful staff member, not a robotic assistant. Keep answers clear and concise.\n\nIf you don't find the answer in the documents, be honest and let the customer know you'll have someone follow up, rather than guessing or making up information."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        192,
+        496
+      ],
+      "id": "de7a03ab-998a-4b6d-9e49-846790ebabb2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "companydocs",
+          "mode": "list",
+          "cachedResultName": "companydocs"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        112
+      ],
+      "id": "a7846c3b-6a0e-4560-b049-ea0682f18651",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "XIh2aX6nj3nW0r9B",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        272,
+        672
+      ],
+      "id": "8d1e1259-c220-4efa-a5a3-20e558f4e9cf",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Retrieve information from any company documents",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "companydocs",
+          "mode": "list",
+          "cachedResultName": "companydocs"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        720
+      ],
+      "id": "eb9d8e04-60c6-455a-959e-616494745bf5",
+      "name": "Pinecone Vector Store1",
+      "credentials": {
+        "pineconeApi": {
+          "id": "XIh2aX6nj3nW0r9B",
+          "name": "Pinecone account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        928
+      ],
+      "id": "1b53147b-3062-446e-90c0-71170deeaee2",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "x18AMzs5e5Q4NtQA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ],
+      "ai_vectorStore": [
+        []
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Google Drive Trigger": {
+      "lastTimeChecked": "2026-08-21T15:14:13Z"
+    },
+    "node:Google Drive Trigger1": {
+      "lastTimeChecked": "2026-08-21T15:14:15Z"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "5ee6787c-08ff-4051-add3-6fd76c1058a9",
+  "activeVersionId": "5ee6787c-08ff-4051-add3-6fd76c1058a9",
+  "triggerCount": 3,
+  "shared": [
+    {
+      "updatedAt": "2026-08-15T04:25:23.754Z",
+      "createdAt": "2026-08-15T04:25:23.754Z",
+      "role": "workflow:owner",
+      "workflowId": "hTPmpbA7osXTspC7",
+      "projectId": "rEvDCXAP7F1lLP6l"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-08-15T05:21:27.000Z",
+    "createdAt": "2026-08-15T05:19:09.869Z",
+    "versionId": "5ee6787c-08ff-4051-add3-6fd76c1058a9",
+    "workflowId": "hTPmpbA7osXTspC7",
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3",
+            "mode": "list",
+            "cachedResultName": "RAG VECTOR COMPANY DOCS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          0
+        ],
+        "id": "f9bb648a-c724-4cb9-a96c-21f4973190e5",
+        "name": "Google Drive Trigger",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "83HGprsOr1AmojiR",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3",
+            "mode": "list",
+            "cachedResultName": "RAG VECTOR COMPANY DOCS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1jjwH_C1F8rrIZGQrN-GykB8Hgsyo_Bi3"
+          },
+          "event": "fileUpdated",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          192
+        ],
+        "id": "b720eab1-84ca-404a-ace5-cc9a57eb4b4d",
+        "name": "Google Drive Trigger1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "83HGprsOr1AmojiR",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          288,
+          96
+        ],
+        "id": "e480e228-7fab-4348-9088-939f52392452",
+        "name": "Download file",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "83HGprsOr1AmojiR",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          416,
+          304
+        ],
+        "id": "050b33c6-91b3-4553-9c40-ccb55ab505e6",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "x18AMzs5e5Q4NtQA",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "dataType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1.1,
+        "position": [
+          608,
+          272
+        ],
+        "id": "f366d6bf-7a0c-4927-a84c-5010f9990960",
+        "name": "Default Data Loader"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          -32,
+          496
+        ],
+        "id": "9f809434-701a-462a-884b-279e59245177",
+        "name": "When chat message received",
+        "webhookId": "221a2a6c-a29c-41f4-997b-04e5d39f0778"
+      },
+      {
+        "parameters": {
+          "model": "llama-3.3-70b-versatile",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+        "typeVersion": 1,
+        "position": [
+          112,
+          720
+        ],
+        "id": "d1d5037a-f393-456e-9dca-9d09a7e1291b",
+        "name": "Groq Chat Model",
+        "credentials": {
+          "groqApi": {
+            "id": "ZhutSD9bJfdOcVDy",
+            "name": "Groq account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "You are a friendly and helpful customer service assistant for Brightline Home Services, a residential cleaning company in Austin, Texas.\n\nYour job is to answer customer questions using the company documents available to you through the search tool. Always search the documents first before answering questions about pricing, policies, services, or company details.\n\nSpeak in a warm, approachable, and conversational tone — like a helpful staff member, not a robotic assistant. Keep answers clear and concise.\n\nIf you don't find the answer in the documents, be honest and let the customer know you'll have someone follow up, rather than guessing or making up information."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          192,
+          496
+        ],
+        "id": "de7a03ab-998a-4b6d-9e49-846790ebabb2",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "pineconeIndex": {
+            "__rl": true,
+            "value": "companydocs",
+            "mode": "list",
+            "cachedResultName": "companydocs"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+        "typeVersion": 1.3,
+        "position": [
+          480,
+          112
+        ],
+        "id": "a7846c3b-6a0e-4560-b049-ea0682f18651",
+        "name": "Pinecone Vector Store",
+        "credentials": {
+          "pineconeApi": {
+            "id": "XIh2aX6nj3nW0r9B",
+            "name": "Pinecone account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.4,
+        "position": [
+          272,
+          672
+        ],
+        "id": "8d1e1259-c220-4efa-a5a3-20e558f4e9cf",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Retrieve information from any company documents",
+          "pineconeIndex": {
+            "__rl": true,
+            "value": "companydocs",
+            "mode": "list",
+            "cachedResultName": "companydocs"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+        "typeVersion": 1.3,
+        "position": [
+          432,
+          720
+        ],
+        "id": "eb9d8e04-60c6-455a-959e-616494745bf5",
+        "name": "Pinecone Vector Store1",
+        "credentials": {
+          "pineconeApi": {
+            "id": "XIh2aX6nj3nW0r9B",
+            "name": "Pinecone account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          400,
+          928
+        ],
+        "id": "1b53147b-3062-446e-90c0-71170deeaee2",
+        "name": "Embeddings Google Gemini1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "x18AMzs5e5Q4NtQA",
+            "name": "Google Gemini(PaLM) Api account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Google Drive Trigger": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive Trigger1": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download file": {
+        "main": [
+          [
+            {
+              "node": "Pinecone Vector Store",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Pinecone Vector Store",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader": {
+        "ai_document": [
+          [
+            {
+              "node": "Pinecone Vector Store",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Pinecone Vector Store1": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ],
+        "ai_vectorStore": [
+          []
+        ]
+      },
+      "Embeddings Google Gemini1": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Pinecone Vector Store1",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Jayvee Galman",
+    "name": "v2 ",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
