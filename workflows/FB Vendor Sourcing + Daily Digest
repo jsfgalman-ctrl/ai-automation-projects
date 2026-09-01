@@ -1,0 +1,846 @@
+{
+  "updatedAt": "2026-08-21T07:47:40.055Z",
+  "createdAt": "2026-08-19T07:00:21.081Z",
+  "id": "sU3qPkVFboL4UIf5",
+  "name": "FB Vendor Sourcing + Daily Digest",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        128
+      ],
+      "id": "71ed95eb-7943-4111-8f07-7921fba4d92d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "actorId": {
+          "__rl": true,
+          "value": "2chN8UQcH1CfxLRNE",
+          "mode": "id"
+        },
+        "customBody": "{\n  \"resultsLimit\": 10,\n  \"startUrls\": [\n    { \"url\": \"https://www.facebook.com/groups/163658260971020\" }\n  ],\n  \"viewOption\": \"CHRONOLOGICAL\"\n}",
+        "waitForFinish": false,
+        "timeout": 300,
+        "maxTotalChargeUsd": 0.2
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        208,
+        128
+      ],
+      "id": "1ce6b5de-aa1e-441b-9946-a80c9f63bf20",
+      "name": "Run an Actor",
+      "credentials": {
+        "apifyApi": {
+          "id": "RZGv4Ex57pwDKKmi",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 15
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        432,
+        128
+      ],
+      "id": "97008a95-86b1-4462-aa58-99e024c24c98",
+      "name": "Wait",
+      "webhookId": "76423abf-9c19-4dc9-8461-d7b30c47c086"
+    },
+    {
+      "parameters": {
+        "resource": "Actor runs",
+        "operation": "Get run",
+        "runId": {
+          "__rl": true,
+          "value": "={{ $('Run an Actor').item.json.id }}",
+          "mode": "id"
+        }
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        656,
+        32
+      ],
+      "id": "618ddda9-9ecf-4a1b-afd2-0cc795342147",
+      "name": "Get run",
+      "credentials": {
+        "apifyApi": {
+          "id": "RZGv4Ex57pwDKKmi",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "01fa79e5-d030-4c51-9698-77487fabf529",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "SUCCEEDED",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        32
+      ],
+      "id": "d132dcc0-1f5a-436b-a4b9-8fe948725e23",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "Datasets",
+        "datasetId": "={{ $json.defaultDatasetId }}",
+        "options": {}
+      },
+      "type": "@apify/n8n-nodes-apify.apify",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -16
+      ],
+      "id": "f5745970-8520-498d-97cb-9bb92419122c",
+      "name": "Get dataset items",
+      "credentials": {
+        "apifyApi": {
+          "id": "RZGv4Ex57pwDKKmi",
+          "name": "Apify account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5e42774a-b440-4135-8c68-3d90502e69b7",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "RUNNING",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1104,
+        272
+      ],
+      "id": "82293d6f-03ee-4aa0-94d7-72a9132f3663",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fbbd0062-86b3-4dab-b796-bcca11ac14fd",
+              "name": "errorRunId",
+              "value": "={{ $('Run an Actor').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "96add306-31b7-4a69-9599-58cf4480326d",
+              "name": "errorStatus",
+              "value": "={{ $json.status }}",
+              "type": "string"
+            },
+            {
+              "id": "38d07900-d6d3-4e63-9698-52f136c7ac00",
+              "name": "errorTimestamp",
+              "value": "={{ $now }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1392,
+        272
+      ],
+      "id": "f6994a6d-893e-48c5-8477-2bbbfe9a7ea7",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "8851179382",
+        "text": "=⚠️ Apify run failed    \nRun ID: {{ $json.errorRunId }}    \nStatus: {{ $json.errorStatus }}    \nTime: {{ $json.errorTimestamp }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        272
+      ],
+      "id": "8e74ff9c-99a4-4e24-ace4-d6b6fe24ffd0",
+      "name": "Send a text message",
+      "webhookId": "2c517297-c5d1-4588-9d6e-a4e519496b39",
+      "credentials": {
+        "telegramApi": {
+          "id": "V4z0Fl8qqDtZG6Yn",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1-KGrFN8WTRbLh0NohEJKd94hoRE1piMpWTBfBKMC4Xw",
+          "mode": "list",
+          "cachedResultName": "RAW LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-KGrFN8WTRbLh0NohEJKd94hoRE1piMpWTBfBKMC4Xw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "FB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-KGrFN8WTRbLh0NohEJKd94hoRE1piMpWTBfBKMC4Xw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "platform": "Facebook",
+            "lead_id": "={{ 'FB_' + $now.toMillis() + '_' + $itemIndex }}",
+            "source_group_or_hashtag": "={{ $('Get dataset items').item.json.facebookUrl }}",
+            "profile_url": "={{ $('Get dataset items').item.json.url }}",
+            "name": "={{ $('Get dataset items').item.json.user.name }}",
+            "bio_or_post_snippet": "=\t{{ $('Get dataset items').item.json.text }}",
+            "date_scraped": "={{ $now }}",
+            "status": "=\t{{ $json.output.is_vendor ? 'New' : 'Not Relevant' }}",
+            "outreach_status": "Not Contacted",
+            "ai_classification": "=\t{{ $json.output.is_vendor ? $json.output.niche : 'Not Relevant' }}",
+            "draft_message": "=\t{{ $json.output.draft_message }}"
+          },
+          "matchingColumns": [
+            "lead_id"
+          ],
+          "schema": [
+            {
+              "id": "lead_id",
+              "displayName": "lead_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform",
+              "displayName": "platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source_group_or_hashtag",
+              "displayName": "source_group_or_hashtag",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "profile_url",
+              "displayName": "profile_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "bio_or_post_snippet",
+              "displayName": "bio_or_post_snippet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date_scraped",
+              "displayName": "date_scraped",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_classification",
+              "displayName": "ai_classification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "draft_message",
+              "displayName": "draft_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "outreach_status",
+              "displayName": "outreach_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1904,
+        -16
+      ],
+      "id": "072124bc-4bdf-4ade-9337-9af4d85a079e",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "95l9w3Rk62fZnVMw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Author name: {{ $json.user.name }}\nPost text: {{ $json.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are a vendor-sourcing assistant for a marketplace that onboards small businesses, creators, and cultural brands. Given a scraped Facebook group post, determine:\n1. Whether this post/author represents a legitimate small business, creator, or cultural brand (not spam, not unrelated personal post)\n2. Their niche/category (e.g. handmade crafts, food, fashion, art)\n3. A short, personalized 2-sentence outreach DM inviting them to join as a vendor\n\nRespond ONLY in this exact JSON format, no other text:\n{\n  \"is_vendor\": true or false,\n  \"niche\": \"string\",\n  \"draft_message\": \"string\"\n}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1328,
+        -128
+      ],
+      "id": "940acc07-7414-44ac-ab2a-d75130953d30",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1328,
+        112
+      ],
+      "id": "f72ae1a5-721d-4d3b-87e3-a86fea59e7b2",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "ZhutSD9bJfdOcVDy",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"is_vendor\": true,\n  \"niche\": \"handmade crafts\",\n  \"draft_message\": \"Hi! I noticed your beautiful handmade pieces in the group. We'd love to have you as a vendor on our platform — want to learn more?\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1472,
+        112
+      ],
+      "id": "cf9467cc-5c96-450b-80a3-10fd280d8552",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        496
+      ],
+      "id": "335f295b-8403-4e51-bae7-3c6e45a95973",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1-KGrFN8WTRbLh0NohEJKd94hoRE1piMpWTBfBKMC4Xw",
+          "mode": "list",
+          "cachedResultName": "RAW LEADS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-KGrFN8WTRbLh0NohEJKd94hoRE1piMpWTBfBKMC4Xw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "FB",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1-KGrFN8WTRbLh0NohEJKd94hoRE1piMpWTBfBKMC4Xw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        496
+      ],
+      "id": "dfbb3bfb-3a4a-4682-b28b-f6d5e5a2f491",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "95l9w3Rk62fZnVMw",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "15873c0f-f481-44b3-a9ff-67da86ad9e50",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "New",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        432,
+        496
+      ],
+      "id": "1fbd599d-fe7a-472e-ab24-922659a27f48",
+      "name": "Filter",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "lead_id"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "platform",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        496
+      ],
+      "id": "2895b0b7-e2d2-4dc8-82f2-afc0521359e7",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "chatId": "1320760115",
+        "text": "=📊 Daily Vendor Leads Summary — {{ $now.format('MMM dd') }} \n\nNew relevant leads today: {{ $json.count_lead_id }}\nCheck the sheet for details: https://docs.google.com/spreadsheets/d/1-KGrFN8WTRbLh0NohEJKd94hoRE1piMpWTBfBKMC4Xw/edit",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        496
+      ],
+      "id": "ca5b98df-3f7a-4726-a6ae-d09e53065ec3",
+      "name": "Send a text message1",
+      "webhookId": "e41387a6-78a1-44d6-a9a4-e64761a4f6d4",
+      "credentials": {
+        "telegramApi": {
+          "id": "V4z0Fl8qqDtZG6Yn",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "caa2b530-1613-4597-82dc-86a929b15343",
+              "leftValue": "={{ $json.output.is_vendor }}",
+              "rightValue": "   {{ true }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1680,
+        -16
+      ],
+      "id": "80432e10-05c5-4f5f-9852-788650f622e6",
+      "name": "Filter1"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Run an Actor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run an Actor": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get run": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get dataset items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get dataset items": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "7df6c350-274c-47e9-8abb-55c053e177c1",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-08-19T07:00:21.084Z",
+      "createdAt": "2026-08-19T07:00:21.084Z",
+      "role": "workflow:owner",
+      "workflowId": "sU3qPkVFboL4UIf5",
+      "projectId": "rEvDCXAP7F1lLP6l"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
