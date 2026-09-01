@@ -1,0 +1,235 @@
+{
+  "updatedAt": "2026-09-01T07:41:27.590Z",
+  "createdAt": "2026-09-01T07:21:04.412Z",
+  "id": "KUaPTrhZyLDjNLPW",
+  "name": "Error Handler - GitHub Issue + Telegram Alert",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "owner": {
+          "__rl": true,
+          "value": "jsfgalman-ctrl",
+          "mode": "list",
+          "cachedResultName": "jsfgalman-ctrl",
+          "cachedResultUrl": "https://github.com/jsfgalman-ctrl"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "ai-automation-projects",
+          "mode": "list",
+          "cachedResultName": "ai-automation-projects",
+          "cachedResultUrl": "https://github.com/jsfgalman-ctrl/ai-automation-projects"
+        },
+        "title": "=Workflow Error: {{ $json.workflow.name }}",
+        "body": "=Error occurred in workflow: {{ $json.workflow.name }}\nNode: {{ $json.execution.error.node.name }}\nMessage: {{ $json.execution.error.message }}",
+        "labels": [],
+        "assignees": []
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        128,
+        0
+      ],
+      "id": "2442f7f8-32d3-49b9-a205-2fd77922e4b8",
+      "name": "Create an issue",
+      "webhookId": "864621c3-850d-47e5-b13a-8759472b7c34",
+      "credentials": {
+        "githubApi": {
+          "id": "sIXV8O7jk8UWLA6T",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -32
+      ],
+      "id": "c0994094-752b-463e-9f46-a211f8f9c979",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1320760115",
+        "text": "=🚨 New GitHub Issue Created!\n{{ $json.title }}  \nView: {{ $json.html_url }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "ee459711-76cc-4635-a732-38b4003c3d19",
+      "name": "Send a text message",
+      "webhookId": "88b780d4-5010-4743-af6b-c9e1d87b1ebf",
+      "credentials": {
+        "telegramApi": {
+          "id": "V4z0Fl8qqDtZG6Yn",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Create an issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "nodeGroups": [],
+  "pinData": {},
+  "versionId": "0a5b9b20-563b-430f-b8d9-100ee5c5b5e0",
+  "activeVersionId": "0a5b9b20-563b-430f-b8d9-100ee5c5b5e0",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-09-01T07:21:04.420Z",
+      "createdAt": "2026-09-01T07:21:04.420Z",
+      "role": "workflow:owner",
+      "workflowId": "KUaPTrhZyLDjNLPW",
+      "projectId": "rEvDCXAP7F1lLP6l"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-09-01T07:41:19.000Z",
+    "createdAt": "2026-09-01T07:39:39.245Z",
+    "versionId": "0a5b9b20-563b-430f-b8d9-100ee5c5b5e0",
+    "workflowId": "KUaPTrhZyLDjNLPW",
+    "nodes": [
+      {
+        "parameters": {
+          "owner": {
+            "__rl": true,
+            "value": "jsfgalman-ctrl",
+            "mode": "list",
+            "cachedResultName": "jsfgalman-ctrl",
+            "cachedResultUrl": "https://github.com/jsfgalman-ctrl"
+          },
+          "repository": {
+            "__rl": true,
+            "value": "ai-automation-projects",
+            "mode": "list",
+            "cachedResultName": "ai-automation-projects",
+            "cachedResultUrl": "https://github.com/jsfgalman-ctrl/ai-automation-projects"
+          },
+          "title": "=Workflow Error: {{ $json.workflow.name }}",
+          "body": "=Error occurred in workflow: {{ $json.workflow.name }}\nNode: {{ $json.execution.error.node.name }}\nMessage: {{ $json.execution.error.message }}",
+          "labels": [],
+          "assignees": []
+        },
+        "type": "n8n-nodes-base.github",
+        "typeVersion": 1.1,
+        "position": [
+          128,
+          0
+        ],
+        "id": "2442f7f8-32d3-49b9-a205-2fd77922e4b8",
+        "name": "Create an issue",
+        "webhookId": "864621c3-850d-47e5-b13a-8759472b7c34",
+        "credentials": {
+          "githubApi": {
+            "id": "sIXV8O7jk8UWLA6T",
+            "name": "GitHub account"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -128,
+          -32
+        ],
+        "id": "c0994094-752b-463e-9f46-a211f8f9c979",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "chatId": "1320760115",
+          "text": "=🚨 New GitHub Issue Created!\n{{ $json.title }}  \nView: {{ $json.html_url }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          448,
+          0
+        ],
+        "id": "ee459711-76cc-4635-a732-38b4003c3d19",
+        "name": "Send a text message",
+        "webhookId": "88b780d4-5010-4743-af6b-c9e1d87b1ebf",
+        "credentials": {
+          "telegramApi": {
+            "id": "V4z0Fl8qqDtZG6Yn",
+            "name": "Telegram account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Create an issue",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create an issue": {
+        "main": [
+          [
+            {
+              "node": "Send a text message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Jayvee Galman",
+    "name": "v1",
+    "description": "",
+    "autosaved": true
+  },
+  "tags": []
+}
